@@ -1,0 +1,47 @@
+<navigation-bar
+  title="历史记录"
+  back="{{true}}"
+  fallback-url="/pages/index/index"
+  color="#111827"
+  background="#F7F8FC"
+></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="page">
+    <view class="top-nav">
+      <view class="nav-chip" bindtap="goToNewPlan">新建方案</view>
+      <view class="nav-chip" bindtap="goToCases">优秀案例</view>
+      <view class="nav-chip nav-chip-active">历史记录</view>
+    </view>
+
+    <view class="hero-card">
+      <view class="hero-title">历史记录</view>
+      <view class="hero-desc">已生成的方案会保存在这里，点进详情页后仍然可以继续导出 PDF 和转发分享。</view>
+    </view>
+
+    <view wx:if="{{!historyRecords.length}}" class="card empty-card">
+      <view class="empty-title">还没有历史方案</view>
+      <view class="empty-desc">先去首页上传图片并生成一个完整方案，之后就会出现在这里。</view>
+    </view>
+
+    <view wx:else class="history-list">
+      <view wx:for="{{historyRecords}}" wx:key="id" class="history-card" bindtap="openPlanDetail" data-id="{{item.id}}">
+        <view class="history-cover-shell">
+          <image wx:if="{{item.coverImageUrl}}" class="history-cover" src="{{item.coverDisplayImagePath || item.coverImageUrl}}" mode="aspectFill"></image>
+          <view wx:else class="history-cover history-cover-placeholder">方案预览</view>
+        </view>
+        <view class="history-body">
+          <view class="history-title">{{item.title}}</view>
+          <view class="history-meta">{{item.updatedAtText}}</view>
+          <view class="history-tags">
+            <view class="history-tag">{{item.servicePeople}}</view>
+            <view class="history-tag">{{item.spaceType}}</view>
+            <view class="history-tag">{{item.budgetRange}}</view>
+            <view wx:if="{{item.renderViewCount > 1}}" class="history-tag">多视角 {{item.renderViewCount}} 张</view>
+          </view>
+          <view class="history-status">{{item.statusText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</scroll-view>

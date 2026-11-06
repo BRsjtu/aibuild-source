@@ -1,0 +1,119 @@
+<navigation-bar
+  title="方案详情"
+  back="{{true}}"
+  fallback-url="/pages/history/index"
+  color="#111827"
+  background="#F7F8FC"
+></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="page">
+    <view wx:if="{{loadingRecord}}" class="card empty-card">
+      <view class="empty-title">正在打开方案</view>
+      <view class="empty-desc">正在读取历史记录和本地图片缓存，请稍候。</view>
+    </view>
+
+    <view wx:elif="{{!record}}" class="card empty-card">
+      <view class="empty-title">暂无方案内容</view>
+      <view class="empty-desc">请先回到首页生成方案，或者从历史记录中进入详情页。</view>
+      <button class="primary-btn" bindtap="goHome">返回首页</button>
+    </view>
+
+    <block wx:elif="{{record}}">
+      <view class="hero-card">
+        <view class="hero-title">{{record.title}}</view>
+        <view class="hero-meta">{{record.servicePeople}} · {{record.spaceType}} · {{record.budgetRange}}</view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">方案详情</view>
+        <view class="tag-group">
+          <view class="soft-tag">{{record.areaText}}</view>
+          <view class="soft-tag">{{record.servicePeople}}</view>
+          <view class="soft-tag">{{record.spaceType}}</view>
+          <view class="soft-tag">{{record.budgetRange}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{originalPhotos.length}}" class="card">
+        <view class="section-title">改造前原图</view>
+        <view wx:if="{{primaryOriginalPhoto.displayImagePath}}" class="image-shell" bindtap="previewImage" data-url="{{primaryOriginalPhoto.previewImagePath}}">
+          <image class="image-block" src="{{primaryOriginalPhoto.displayImagePath}}" mode="aspectFit"></image>
+        </view>
+        <view wx:else class="image-shell original-photo-placeholder">
+          <view class="placeholder-title">原图暂不可预览</view>
+          <view class="placeholder-desc">该原图来自已失效的临时文件或受限远程地址。</view>
+        </view>
+        <view wx:if="{{secondaryOriginalPhotos.length}}" class="image-grid original-photo-grid">
+          <view wx:for="{{secondaryOriginalPhotos}}" wx:key="sourceIndex" class="image-grid-card">
+            <view class="grid-card-title">{{item.title}}</view>
+            <view wx:if="{{item.displayImagePath}}" class="image-shell small-image-shell" bindtap="previewImage" data-url="{{item.previewImagePath}}">
+              <image class="image-block" src="{{item.displayImagePath}}" mode="aspectFill"></image>
+            </view>
+            <view wx:else class="image-shell small-image-shell original-photo-placeholder">
+              <view class="placeholder-desc">原图暂不可预览</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{record.renderDisplayImagePath || record.renderImageUrl}}" class="card">
+        <view class="section-title">3D 效果图</view>
+        <view class="image-shell" bindtap="previewImage" data-url="{{record.renderDisplayImagePath || record.renderImageUrl}}">
+          <image class="image-block" src="{{record.renderDisplayImagePath || record.renderImageUrl}}" mode="aspectFit"></image>
+        </view>
+      </view>
+
+      <view wx:if="{{record.floorPlanDisplayImagePath || record.floorPlanImageUrl}}" class="card">
+        <view class="section-title">2D 改造设计图纸</view>
+        <view class="image-shell" bindtap="previewImage" data-url="{{record.floorPlanDisplayImagePath || record.floorPlanImageUrl}}">
+          <image class="image-block" src="{{record.floorPlanDisplayImagePath || record.floorPlanImageUrl}}" mode="aspectFit"></image>
+        </view>
+      </view>
+
+      <view wx:if="{{renderViews.length > 1}}" class="card">
+        <view class="section-title">多视角 3D 图集</view>
+        <view class="image-grid">
+        <view wx:for="{{renderViews}}" wx:key="sourceIndex" class="image-grid-card">
+            <view class="grid-card-title">{{item.title}}</view>
+            <view class="image-shell small-image-shell" bindtap="previewImage" data-url="{{item.displayImagePath || item.imageUrl}}">
+              <image class="image-block" src="{{item.displayImagePath || item.imageUrl}}" mode="aspectFill"></image>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{designBlocks.length}}" class="card">
+        <view class="section-title">智能设计说明</view>
+        <view class="markdown-panel">
+          <block wx:for="{{designBlocks}}" wx:key="index">
+            <view wx:if="{{item.type === 'heading'}}" class="markdown-heading">
+              <rich-text nodes="{{item.html}}"></rich-text>
+            </view>
+            <view wx:elif="{{item.type === 'paragraph'}}" class="markdown-paragraph">
+              <rich-text nodes="{{item.html}}"></rich-text>
+            </view>
+            <view wx:elif="{{item.type === 'list'}}" class="markdown-list">
+              <view wx:for="{{item.items}}" wx:for-item="listItem" wx:key="index" class="markdown-list-item">
+                <text class="markdown-list-marker">{{item.listType === 'ordered' ? listItem.order + '.' : '•'}}</text>
+                <view class="markdown-list-text">
+                  <rich-text nodes="{{listItem.html}}"></rich-text>
+                </view>
+              </view>
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">导出与分享</view>
+        <view class="action-row">
+          <button class="primary-btn" loading="{{exportLoading}}" disabled="{{exportLoading}}" bindtap="exportPdf">导出 PDF</button>
+          <button class="ghost-btn" open-type="share">转发给朋友</button>
+        </view>
+        <button class="ghost-btn full-btn" bindtap="goHome">回到首页继续编辑</button>
+        <view wx:if="{{errorMessage}}" class="error-box">{{errorMessage}}</view>
+      </view>
+    </block>
+  </view>
+</scroll-view>

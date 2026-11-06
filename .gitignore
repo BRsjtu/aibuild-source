@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+!.env.example
+project.private.config.json
+tmp/
+output/
+outputs/
+*.log
+*.db
+*.sqlite*
+server/data/*.db
+server/data/*.sqlite*
+.secrets/

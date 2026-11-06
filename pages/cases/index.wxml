@@ -1,0 +1,61 @@
+<navigation-bar
+  title="优秀案例"
+  back="{{true}}"
+  fallback-url="/pages/index/index"
+  color="#111827"
+  background="#F7F8FC"
+></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y lower-threshold="160" bindscrolltolower="loadMoreCases">
+  <view class="page">
+    <view class="top-nav">
+      <view class="nav-chip" bindtap="goToNewPlan">新建方案</view>
+      <view class="nav-chip nav-chip-active">优秀案例</view>
+      <view class="nav-chip" bindtap="goToHistory">历史记录</view>
+    </view>
+
+    <view class="hero-card">
+      <view class="hero-title">优秀案例</view>
+      <view class="hero-desc">集中查看改造前、方案逻辑与改造后效果，也可以一键把案例需求带回首页继续生成。</view>
+    </view>
+
+    <view wx:if="{{loading}}" class="card empty-card">
+      <view class="empty-title">案例加载中</view>
+      <view class="empty-desc">正在读取案例库，请稍候。</view>
+    </view>
+
+    <view wx:elif="{{errorMessage}}" class="card empty-card">
+      <view class="empty-title">案例暂时不可用</view>
+      <view class="empty-desc">{{errorMessage}}</view>
+    </view>
+
+    <view wx:else class="case-list">
+      <view wx:for="{{visibleCaseStudies}}" wx:key="id" class="case-card">
+        <view class="case-cover-shell" wx:if="{{item.coverDisplayImagePath || item.coverImageUrl}}" bindtap="previewCaseImage" data-url="{{item.coverPreviewImageUrl || item.coverImageUrl}}">
+          <image wx:if="{{item.coverDisplayImagePath}}" class="case-cover" src="{{item.coverDisplayImagePath}}" mode="aspectFill"></image>
+          <view wx:else class="case-cover-placeholder">案例预览</view>
+        </view>
+        <view wx:elif="{{item.beforeImageUrl}}" class="case-cover-shell" bindtap="previewCaseImage" data-url="{{item.beforeImageUrl}}">
+          <image class="case-cover" src="{{item.beforeImageUrl}}" mode="aspectFill"></image>
+        </view>
+        <view wx:else class="case-cover-shell case-cover-placeholder">案例预览</view>
+
+        <view class="case-body">
+          <view class="case-title">{{item.title}}</view>
+          <view class="case-subtitle">{{item.subtitle}}</view>
+          <view class="case-tags">
+            <view class="case-tag">{{item.spaceType}}</view>
+            <view class="case-tag">{{item.targetUsers}}</view>
+            <view class="case-tag">{{item.budgetRange}}</view>
+          </view>
+          <view class="case-highlight">{{item.highlight}}</view>
+          <view class="case-actions">
+            <button class="ghost-btn small-btn" bindtap="openCaseDetail" data-id="{{item.id}}">查看详情</button>
+            <button class="primary-btn small-btn" bindtap="applyCasePreset" data-id="{{item.id}}">套用需求</button>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{hasMoreCases}}" class="load-more-tip">继续下滑查看更多案例</view>
+    </view>
+  </view>
+</scroll-view>

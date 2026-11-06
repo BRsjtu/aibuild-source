@@ -1,0 +1,704 @@
+<navigation-bar
+  title="微光空间"
+  back="{{false}}"
+  color="{{themeNavColor}}"
+  background="{{themeNavBackground}}"
+></navigation-bar>
+
+<scroll-view class="scrollarea {{themeClass}}" scroll-y type="list">
+  <wxs module="sp">
+    function displayLabel(primary, custom) {
+      custom = custom || ''
+      primary = primary || ''
+      if (custom.length) {
+        return custom
+      }
+      return primary
+    }
+    module.exports = { displayLabel: displayLabel }
+  </wxs>
+
+  <view class="page">
+    <view class="hero-card hero-card-main">
+      <button class="theme-switch" type="default" bindtap="toggleTheme">
+        <text class="theme-switch-dot"></text>
+        <text>{{themeToggleText}}</text>
+      </button>
+      <view class="hero-eyebrow">AI SPACE DESIGN</view>
+      <view class="hero-title">微光空间</view>
+      <view class="hero-desc">上传现状照片，填写需求与重点配置，快速生成基层休息空间的 2D、3D 和智能设计说明。</view>
+      <view class="hero-tags">
+        <view class="hero-tag">2D 图纸</view>
+        <view class="hero-tag">3D 效果</view>
+        <view class="hero-tag">设计说明</view>
+      </view>
+      <view class="hero-graphic">
+        <view class="hero-graphic-ring"></view>
+        <view class="hero-graphic-grid">
+          <view></view>
+          <view></view>
+          <view></view>
+          <view></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="feature-grid home-entry-grid">
+      <view class="feature-tile feature-tile-photo home-entry-large" bindtap="openPlanForm">
+        <view class="feature-code">START</view>
+        <view class="feature-title">新建方案</view>
+        <view class="feature-desc">上传照片，生成改造设计</view>
+        <view class="feature-pattern feature-pattern-ring"></view>
+      </view>
+      <view class="feature-tile feature-tile-cases" bindtap="goToCasesPage">
+        <view class="feature-code">CASE</view>
+        <view class="feature-title">优秀案例</view>
+        <view class="feature-desc">查看改造样例</view>
+        <view class="feature-pattern feature-pattern-wave"></view>
+      </view>
+      <view class="feature-tile feature-tile-history" bindtap="goToHistoryPage">
+        <view class="feature-code">HISTORY</view>
+        <view class="feature-title">历史记录</view>
+        <view class="feature-desc">找回生成方案</view>
+        <view class="feature-pattern feature-pattern-grid">
+          <view></view>
+          <view></view>
+          <view></view>
+          <view></view>
+        </view>
+      </view>
+    </view>
+
+    <block wx:if="{{planFormVisible}}">
+    <view class="card module-card module-photo">
+      <view class="module-head">
+        <view>
+          <view class="module-kicker">STEP 01</view>
+          <view class="section-title no-margin">上传空间照片</view>
+        </view>
+        <view class="module-badge">PHOTO</view>
+      </view>
+      <button class="primary-btn full-width-btn" type="default" bindtap="chooseSpacePhoto">
+        {{form.photoPaths.length ? '继续添加现状照片' : '上传现状照片（最多 9 张）'}}
+      </button>
+
+      <view wx:if="{{form.photoPaths.length}}" class="photo-preview-box">
+        <view class="photo-count-tip">
+          已上传 {{form.photoPaths.length}} / 9 张，可继续补充不同角度。系统会为每张原图各生成一张对应视角的 3D 图。
+        </view>
+        <view class="photo-grid">
+          <view wx:for="{{form.photoPaths}}" wx:key="*this" class="photo-tile">
+            <view class="photo-meta-row">
+              <view class="photo-index-tag">视角 {{index + 1}}</view>
+              <view wx:if="{{index === form.primaryViewIndex}}" class="photo-primary-tag">默认展示</view>
+            </view>
+            <image
+              class="photo-thumb"
+              src="{{item}}"
+              mode="aspectFill"
+              data-index="{{index}}"
+              bindtap="previewLocalPhoto"
+            ></image>
+            <button
+              class="{{index === form.primaryViewIndex ? 'ghost-btn tiny-btn primary-view-btn primary-view-btn-active' : 'ghost-btn tiny-btn primary-view-btn'}}"
+              data-index="{{index}}"
+              bindtap="setPrimaryViewIndex"
+            >
+              {{index === form.primaryViewIndex ? '当前默认展示' : '设为默认展示'}}
+            </button>
+            <button class="ghost-btn danger-btn tiny-btn" data-index="{{index}}" bindtap="removePhotoAt">
+              删除
+            </button>
+          </view>
+        </view>
+        <view wx:if="{{form.photoPaths.length > 1}}" class="photo-rule-tip">
+          规则：默认展示图决定首页展示和导出封面，其余图片作为同一空间的辅助视角，用于保持布局与家具一致。
+        </view>
+        <view class="photo-actions">
+          <button class="ghost-btn small-btn" bindtap="chooseSpacePhoto">继续添加</button>
+          <button class="ghost-btn small-btn" bindtap="previewLocalPhoto" data-index="{{form.primaryViewIndex}}">查看默认展示图</button>
+          <button class="ghost-btn danger-btn small-btn" bindtap="clearSpacePhoto">清空全部</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="card module-card module-brief">
+      <view class="module-head">
+        <view>
+          <view class="module-kicker">STEP 02</view>
+          <view class="section-title no-margin">填写基础需求</view>
+        </view>
+        <view class="module-badge">BRIEF</view>
+      </view>
+
+      <view class="subsection">
+        <view class="subsection-title">基础信息</view>
+
+        <view class="field">
+          <view class="field-label">服务人群</view>
+          <picker mode="selector" range="{{servicePeopleOptions}}" bindchange="onServicePeopleChange">
+            <view class="picker-value">{{sp.displayLabel(form.servicePeople, form.servicePeopleCustom) || '请选择服务人群'}}</view>
+          </picker>
+        </view>
+
+        <view class="field">
+          <view class="field-label">也可直接填写服务人群</view>
+          <input
+            class="input"
+            value="{{form.servicePeopleCustom}}"
+            placeholder="例如：网约车司机、护士、建筑工人"
+            data-field="servicePeopleCustom"
+            bindinput="onTextInput"
+          />
+        </view>
+
+        <view class="field">
+          <view class="field-label">空间类型</view>
+          <picker mode="selector" range="{{spaceTypeOptions}}" bindchange="onSpaceTypeChange">
+            <view class="picker-value">{{sp.displayLabel(form.spaceType, form.spaceTypeCustom) || '请选择空间类型'}}</view>
+          </picker>
+        </view>
+
+        <view class="field">
+          <view class="field-label">也可直接填写空间类型</view>
+          <input
+            class="input"
+            value="{{form.spaceTypeCustom}}"
+            placeholder="例如：门岗值守点、社区驿站、清洁工具间"
+            data-field="spaceTypeCustom"
+            bindinput="onTextInput"
+          />
+        </view>
+
+        <view class="field-grid">
+          <view class="field field-half">
+            <view class="field-label">大致面积</view>
+            <input
+              class="input"
+              value="{{form.areaText}}"
+              placeholder="例如：10-15 平方米"
+              data-field="areaText"
+              bindinput="onTextInput"
+            />
+          </view>
+
+          <view class="field field-half">
+            <view class="field-label">预算范围</view>
+            <picker
+              mode="selector"
+              range="{{budgetRangeOptions}}"
+              value="{{budgetPickerIndex}}"
+              bindchange="onBudgetRangeChange"
+            >
+              <view class="picker-value">{{sp.displayLabel(form.budgetRange, form.budgetRangeCustom) || '请选择预算范围'}}</view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="field">
+          <view class="field-label">也可直接填写预算说明</view>
+          <input
+            class="input"
+            value="{{form.budgetRangeCustom}}"
+            placeholder="例如：已有旧家具可复用，新增采购控制在 5000 元内"
+            data-field="budgetRangeCustom"
+            bindinput="onTextInput"
+          />
+        </view>
+      </view>
+
+      <view class="subsection">
+        <view class="subsection-title">改造目标</view>
+
+        <view class="field">
+          <view class="field-label">核心诉求</view>
+          <textarea
+            class="textarea"
+            value="{{form.coreNeeds}}"
+            placeholder="例如：增加折叠床、饮水机、储物空间，提高休息效率"
+            data-field="coreNeeds"
+            bindinput="onTextInput"
+            maxlength="-1"
+          ></textarea>
+        </view>
+
+        <view class="field no-margin">
+          <view class="field-label">约束条件</view>
+          <textarea
+            class="textarea"
+            value="{{form.constraints}}"
+            placeholder="例如：预算克制、方便清洁、尽量不改门窗位置"
+            data-field="constraints"
+            bindinput="onTextInput"
+            maxlength="-1"
+          ></textarea>
+        </view>
+      </view>
+    </view>
+
+    <view class="card module-card module-config">
+      <view class="module-head">
+        <view>
+          <view class="module-kicker">STEP 03</view>
+          <view class="section-title no-margin">选择重点配置</view>
+        </view>
+        <view class="module-badge">ITEMS</view>
+      </view>
+      <checkbox-group bindchange="onFurnitureChange">
+        <view class="checkbox-grid compact-checkbox-grid">
+          <label wx:for="{{furnitureOptions}}" wx:key="id" class="checkbox-item">
+            <checkbox value="{{item.id}}" checked="{{item.checked}}" color="{{themeAccentColor}}"></checkbox>
+            <text>{{item.label}}</text>
+          </label>
+        </view>
+      </checkbox-group>
+      <view wx:if="{{selectedStyleSummaries.length}}" class="style-config-list">
+        <view class="style-config-title">指定家具款式</view>
+        <view wx:for="{{selectedStyleSummaries}}" wx:key="furnitureId" class="style-config-card">
+          <image
+            wx:if="{{item.displayImagePath}}"
+            class="style-config-thumb"
+            src="{{item.displayImagePath}}"
+            mode="aspectFill"
+          ></image>
+          <view class="style-config-body">
+            <view class="style-config-name">{{item.label}}</view>
+            <view class="{{item.hasSelection ? 'style-config-summary style-config-summary-on' : 'style-config-summary'}}">
+              {{item.summary}}
+            </view>
+          </view>
+          <button class="ghost-btn tiny-btn style-config-btn" bindtap="openFurnitureStyleSelector" data-id="{{item.furnitureId}}">
+            选款式
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{styleSelectorVisible}}" class="style-modal-mask" catchtap="closeFurnitureStyleSelector">
+      <view class="style-modal" catchtap="noop">
+        <view class="style-modal-head">
+          <view>
+            <view class="module-kicker">STYLE</view>
+            <view class="style-modal-title">选择{{activeFurnitureStyleLabel}}款式</view>
+          </view>
+          <button class="text-btn" bindtap="closeFurnitureStyleSelector">关闭</button>
+        </view>
+
+        <view wx:if="{{activeFurnitureStyleOptions.length}}" class="style-option-grid">
+          <view
+            wx:for="{{activeFurnitureStyleOptions}}"
+            wx:key="id"
+            class="{{item.selected ? 'style-option-card style-option-card-active' : 'style-option-card'}}"
+            bindtap="selectFurnitureStyle"
+            data-id="{{item.id}}"
+          >
+            <image
+              wx:if="{{item.displayImagePath}}"
+              class="style-option-image"
+              src="{{item.displayImagePath}}"
+              mode="aspectFill"
+            ></image>
+            <view wx:else class="style-option-image style-option-image-placeholder"></view>
+            <view class="style-option-name">{{item.label}}</view>
+            <view class="style-option-desc">{{item.description}}</view>
+            <view wx:if="{{item.license}}" class="style-option-license">{{item.license}}</view>
+          </view>
+        </view>
+
+        <view wx:else class="style-empty">
+          后端暂未返回内置款式，可上传自己的家具参考图。
+        </view>
+
+        <view class="style-modal-actions">
+          <button class="secondary-btn small-btn" bindtap="chooseCustomFurnitureStyleImage">上传指定图片</button>
+          <button class="ghost-btn small-btn" bindtap="clearFurnitureStyleForActive">不指定款式</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="card module-card module-generate">
+      <view class="module-head">
+        <view>
+          <view class="module-kicker">STEP 04</view>
+          <view class="section-title no-margin">开始生成</view>
+        </view>
+        <view class="module-badge">AI</view>
+      </view>
+      <view wx:if="{{form.photoPaths.length > 1}}" class="section-subtitle">
+        当前为多视角模式：会优先生成每张原图对应角度的 3D 效果图，完成后先显示；2D 图纸和说明随后补齐。
+      </view>
+      <button
+        class="primary-btn full-width-btn"
+        type="default"
+        loading="{{generating}}"
+        disabled="{{generating}}"
+        bindtap="handleGenerateAll"
+      >
+        生成完整方案
+      </button>
+
+      <view wx:if="{{currentStepText}}" class="status-box">
+        <text class="status-title">当前状态</text>
+        <text class="status-text">{{currentStepText}}</text>
+      </view>
+
+      <view wx:if="{{generating}}" class="progress-box">
+        <view class="progress-head">
+          <text class="progress-title">{{progressTitle}}</text>
+          <text class="progress-percent">{{progressPercent}}%</text>
+        </view>
+        <view class="progress-track">
+          <view class="progress-bar" style="width: {{progressPercent}}%;"></view>
+        </view>
+        <view class="progress-hint">{{progressHint}}</view>
+        <view wx:if="{{progressEtaText}}" class="progress-eta">{{progressEtaText}}</view>
+        <view class="progress-wait-tip">图片生成通常需要等待几分钟，请保持页面打开；3D 效果图出来后会自动显示。</view>
+      </view>
+
+      <view wx:if="{{errorMessage}}" class="error-box">
+        <text>{{errorMessage}}</text>
+      </view>
+    </view>
+    </block>
+
+    <view wx:if="{{latestPlanRecord}}" class="card module-card module-latest">
+      <view class="module-head">
+        <view>
+          <view class="module-kicker">RECENT</view>
+          <view class="section-title no-margin">最近一次方案</view>
+        </view>
+        <view class="module-badge">PLAN</view>
+      </view>
+      <view class="latest-title">{{latestPlanRecord.title}}</view>
+      <view class="result-tags">
+        <view class="result-tag">{{latestPlanRecord.servicePeople}}</view>
+        <view class="result-tag">{{latestPlanRecord.spaceType}}</view>
+        <view class="result-tag">{{latestPlanRecord.budgetRange}}</view>
+      </view>
+      <view class="latest-desc">{{latestPlanRecord.summaryExcerpt || '已生成方案结果，可进入详情页继续导出与分享。'}}</view>
+      <view class="action-grid latest-actions">
+        <button class="secondary-btn" bindtap="openLatestPlanDetail">查看方案详情</button>
+        <button class="ghost-btn" bindtap="toggleAdvancedPanel">{{advancedPanelVisible ? '收起高级编辑' : '继续精修方案'}}</button>
+      </view>
+    </view>
+
+    <block wx:if="{{advancedPanelVisible && (floorPlanImagePath || renderImagePath || designText)}}">
+      <view class="card">
+        <view class="section-row">
+          <view>
+            <view class="section-title no-margin">高级编辑工作台</view>
+            <view class="section-subtitle">这里保留当前版本的结果查看、可控编辑、最终说明生成与调试信息。</view>
+          </view>
+          <button class="text-btn" bindtap="toggleAdvancedPanel">收起</button>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">生成结果</view>
+        <view class="result-tags">
+          <view class="result-tag">{{sp.displayLabel(form.servicePeople, form.servicePeopleCustom)}}</view>
+          <view class="result-tag">{{sp.displayLabel(form.spaceType, form.spaceTypeCustom)}}</view>
+          <view class="result-tag">{{form.areaText}}</view>
+          <view class="result-tag">{{sp.displayLabel(form.budgetRange, form.budgetRangeCustom)}}</view>
+        </view>
+
+        <view wx:if="{{renderImagePath}}" class="result-block">
+        <view class="result-header">
+          <view class="result-title">3D 效果图</view>
+          <view class="result-caption">
+            {{floorPlanImagePath ? (renderViews.length > 1 ? '这里显示当前默认展示图；下方图集可查看所有视角的一致性结果。' : '直接基于原始空间照片生成，更适合展示真实改造效果。') : '3D 效果图已优先生成，2D 图纸和设计说明还在后台补齐。'}}
+          </view>
+        </view>
+          <view class="result-image-shell" data-type="render" bindtap="previewOutputImage">
+            <image
+              class="result-image"
+              src="{{renderImagePath}}"
+              mode="aspectFit"
+              data-type="render"
+              bindload="onOutputImageLoad"
+              binderror="onOutputImageError"
+            ></image>
+          </view>
+        </view>
+
+        <view wx:if="{{floorPlanImagePath}}" class="result-block">
+          <view class="result-header">
+            <view class="result-title">2D 改造设计图纸</view>
+            <view class="result-caption">用于确认功能分区、家具布置和基础动线</view>
+          </view>
+          <view class="result-image-shell" data-type="floor" bindtap="previewOutputImage">
+            <image
+              class="result-image"
+              src="{{floorPlanImagePath}}"
+              mode="aspectFit"
+              data-type="floor"
+              bindload="onOutputImageLoad"
+              binderror="onOutputImageError"
+            ></image>
+          </view>
+        </view>
+
+        <view wx:if="{{renderViews.length > 1}}" class="result-block">
+          <view class="result-header">
+            <view class="result-title">多视角 3D 图集</view>
+            <view class="result-caption">每张原图都会输出一张对应角度的 3D 效果图，用来检查方案在不同视角下是否保持一致。</view>
+          </view>
+          <view class="render-gallery">
+        <view wx:for="{{renderViews}}" wx:key="sourceIndex" class="render-gallery-card" data-index="{{index}}" bindtap="previewRenderView">
+              <image class="render-gallery-image" src="{{item.imagePath || item.imageUrl}}" mode="aspectFill"></image>
+              <view class="render-gallery-title">{{item.title}}</view>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{designText}}" class="result-block">
+          <view class="result-header">
+            <view class="result-title">中文设计说明</view>
+            <view class="result-caption">支持轻量 Markdown 渲染展示</view>
+          </view>
+          <view class="markdown-panel">
+            <block wx:for="{{designBlocks}}" wx:key="index">
+              <view wx:if="{{item.type === 'heading'}}" class="markdown-heading">
+                <rich-text nodes="{{item.html}}"></rich-text>
+              </view>
+              <view wx:elif="{{item.type === 'paragraph'}}" class="markdown-paragraph">
+                <rich-text nodes="{{item.html}}"></rich-text>
+              </view>
+              <view wx:elif="{{item.type === 'list'}}" class="markdown-list">
+                <view
+                  wx:for="{{item.items}}"
+                  wx:for-item="listItem"
+                  wx:key="index"
+                  class="markdown-list-item"
+                >
+                  <text class="markdown-list-marker">{{item.listType === 'ordered' ? listItem.order + '.' : '•'}}</text>
+                  <view class="markdown-list-text">
+                    <rich-text nodes="{{listItem.html}}"></rich-text>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{floorPlanImagePath || renderImagePath}}" class="card">
+        <view class="section-title">可控编辑工作台</view>
+        <view class="editor-scene-switch">
+          <button
+            class="{{activeWorkbenchScene === 'floor' ? 'scene-btn scene-btn-active' : 'scene-btn'}}"
+            bindtap="onWorkbenchSceneChange"
+            data-scene="floor"
+            disabled="{{!floorPlanImagePath}}"
+          >
+            2D 设计图纸
+          </button>
+          <button
+            class="{{activeWorkbenchScene === 'render' ? 'scene-btn scene-btn-active' : 'scene-btn'}}"
+            bindtap="onWorkbenchSceneChange"
+            data-scene="render"
+            disabled="{{!renderImagePath}}"
+          >
+            3D 效果图
+          </button>
+        </view>
+
+        <view class="editor-tip">从家居库添加素材后，可以拖动位置，并对当前选中的家具放大、缩小或删除；确认摆放后可让 AI 基于当前图片重新生成一张编辑后的新图。</view>
+
+        <view class="result-image-shell editor-shell">
+          <movable-area class="editor-area">
+            <image
+              wx:if="{{activeWorkbenchScene === 'render' ? renderImagePath : floorPlanImagePath}}"
+              class="editor-base-image"
+              src="{{activeWorkbenchScene === 'render' ? renderImagePath : floorPlanImagePath}}"
+              mode="aspectFit"
+            ></image>
+
+            <block wx:if="{{activeWorkbenchScene === 'floor'}}">
+              <movable-view
+                wx:for="{{floorPlanDecorItems}}"
+                wx:key="instanceId"
+                class="{{selectedDecorItemId === item.instanceId ? 'decor-item decor-item-active' : 'decor-item'}}"
+                direction="all"
+                x="{{item.x}}"
+                y="{{item.y}}"
+                damping="40"
+                out-of-bounds="{{true}}"
+                bindchange="onDecorItemChange"
+                bindtap="selectDecorItem"
+                data-instance-id="{{item.instanceId}}"
+                style="width: {{item.width}}rpx; height: {{item.height}}rpx;"
+              >
+                <view class="decor-item-card" style="background: {{item.color}}; border-color: {{item.accentColor}}; color: {{item.accentColor}};">
+                  <text class="decor-item-icon">{{item.icon}}</text>
+                  <text class="decor-item-label">{{item.label}}</text>
+                </view>
+              </movable-view>
+            </block>
+
+            <block wx:elif="{{activeWorkbenchScene === 'render'}}">
+              <movable-view
+                wx:for="{{renderDecorItems}}"
+                wx:key="instanceId"
+                class="{{selectedDecorItemId === item.instanceId ? 'decor-item decor-item-active' : 'decor-item'}}"
+                direction="all"
+                x="{{item.x}}"
+                y="{{item.y}}"
+                damping="40"
+                out-of-bounds="{{true}}"
+                bindchange="onDecorItemChange"
+                bindtap="selectDecorItem"
+                data-instance-id="{{item.instanceId}}"
+                style="width: {{item.width}}rpx; height: {{item.height}}rpx;"
+              >
+                <view class="decor-item-card" style="background: {{item.color}}; border-color: {{item.accentColor}}; color: {{item.accentColor}};">
+                  <text class="decor-item-icon">{{item.icon}}</text>
+                  <text class="decor-item-label">{{item.label}}</text>
+                </view>
+              </movable-view>
+            </block>
+          </movable-area>
+        </view>
+
+        <view class="editor-actions">
+          <button class="ghost-btn small-btn" bindtap="changeSelectedDecorScale" data-delta="-0.1">缩小选中</button>
+          <button class="ghost-btn small-btn" bindtap="changeSelectedDecorScale" data-delta="0.1">放大选中</button>
+          <button class="ghost-btn danger-btn small-btn" bindtap="removeSelectedDecorItem">删除选中</button>
+          <button class="ghost-btn small-btn" bindtap="clearWorkbenchScene">清空当前图层</button>
+        </view>
+
+        <button
+          class="secondary-btn full-width-btn"
+          type="default"
+          loading="{{controlledEditLoading}}"
+          disabled="{{controlledEditLoading || !(activeWorkbenchScene === 'render' ? renderDecorItems.length : floorPlanDecorItems.length)}}"
+          bindtap="generateControlledEditImage"
+        >
+          根据当前摆放生成编辑后图片
+        </button>
+
+        <view class="editor-library-title">家居素材库</view>
+        <view class="editor-library-grid">
+          <view wx:for="{{furnitureLibrary}}" wx:key="id" class="library-card">
+            <view class="library-chip" style="background: {{item.color}}; color: {{item.accentColor}};">{{item.icon}}</view>
+            <view class="library-label">{{item.label}}</view>
+            <view class="library-category">{{item.category}}</view>
+            <button class="ghost-btn tiny-btn" bindtap="addFurnitureToWorkbench" data-id="{{item.id}}">添加到当前图层</button>
+          </view>
+        </view>
+
+        <button
+          class="primary-btn full-width-btn"
+          type="default"
+          loading="{{finalSummaryLoading}}"
+          disabled="{{finalSummaryLoading}}"
+          bindtap="generateFinalDesignSummary"
+        >
+          生成最终版设计说明
+        </button>
+
+        <view wx:if="{{finalDesignText}}" class="result-block">
+          <view class="result-header">
+            <view class="result-title">最终版设计说明</view>
+            <view class="result-caption">基于当前工作台家具摆放重新生成，可用于比赛展示讲解</view>
+          </view>
+          <view class="markdown-panel">
+            <block wx:for="{{finalDesignBlocks}}" wx:key="index">
+              <view wx:if="{{item.type === 'heading'}}" class="markdown-heading">
+                <rich-text nodes="{{item.html}}"></rich-text>
+              </view>
+              <view wx:elif="{{item.type === 'paragraph'}}" class="markdown-paragraph">
+                <rich-text nodes="{{item.html}}"></rich-text>
+              </view>
+              <view wx:elif="{{item.type === 'list'}}" class="markdown-list">
+                <view
+                  wx:for="{{item.items}}"
+                  wx:for-item="listItem"
+                  wx:key="index"
+                  class="markdown-list-item"
+                >
+                  <text class="markdown-list-marker">{{item.listType === 'ordered' ? listItem.order + '.' : '•'}}</text>
+                  <view class="markdown-list-text">
+                    <rich-text nodes="{{listItem.html}}"></rich-text>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+
+        <view wx:if="{{finalDesignText || designText}}" class="result-block export-block">
+          <view class="result-header">
+            <view class="result-title">方案详情与导出</view>
+            <view class="result-caption">导出 PDF 时会优先使用最终版设计说明，并附上当前 2D/3D 图，方便提交、展示和复用。</view>
+          </view>
+          <view class="export-actions">
+            <button
+              class="secondary-btn small-btn"
+              type="default"
+              loading="{{pdfExportLoading}}"
+              disabled="{{pdfExportLoading}}"
+              bindtap="exportDesignPdf"
+            >
+              导出 PDF
+            </button>
+            <button class="ghost-btn small-btn" open-type="share">
+              转发给朋友
+            </button>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{floorPlanPrompt || renderPrompt || designPrompt || finalDesignPrompt}}" class="card">
+        <view class="collapse-header" bindtap="togglePromptCollapsed">
+          <view class="section-title no-margin">Prompt 预览</view>
+          <view class="collapse-text">{{promptCollapsed ? '展开' : '收起'}}</view>
+        </view>
+
+        <view wx:if="{{!promptCollapsed}}">
+          <view wx:if="{{floorPlanPrompt}}" class="prompt-block">
+            <view class="prompt-header">
+              <view class="result-title">2D 设计图纸 Prompt</view>
+              <button class="text-btn" data-key="floorPlanPrompt" bindtap="copyPrompt">复制</button>
+            </view>
+            <view class="prompt-text">{{floorPlanPrompt}}</view>
+          </view>
+
+          <view wx:if="{{renderPrompt}}" class="prompt-block">
+            <view class="prompt-header">
+              <view class="result-title">3D Prompt</view>
+              <button class="text-btn" data-key="renderPrompt" bindtap="copyPrompt">复制</button>
+            </view>
+            <view class="prompt-text">{{renderPrompt}}</view>
+          </view>
+
+          <view wx:if="{{designPrompt}}" class="prompt-block">
+            <view class="prompt-header">
+              <view class="result-title">设计说明 Prompt</view>
+              <button class="text-btn" data-key="designPrompt" bindtap="copyPrompt">复制</button>
+            </view>
+            <view class="prompt-text">{{designPrompt}}</view>
+          </view>
+
+          <view wx:if="{{finalDesignPrompt}}" class="prompt-block">
+            <view class="prompt-header">
+              <view class="result-title">最终版说明 Prompt</view>
+              <button class="text-btn" data-key="finalDesignPrompt" bindtap="copyPrompt">复制</button>
+            </view>
+            <view class="prompt-text">{{finalDesignPrompt}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{logs.length}}" class="card">
+        <view class="collapse-header" bindtap="toggleLogsCollapsed">
+          <view class="section-title no-margin">运行日志</view>
+          <view class="collapse-text">{{logsCollapsed ? '展开' : '收起'}}</view>
+        </view>
+        <view wx:if="{{!logsCollapsed}}">
+          <view wx:for="{{logs}}" wx:key="*this" class="log-line">{{item}}</view>
+        </view>
+      </view>
+    </block>
+  </view>
+</scroll-view>

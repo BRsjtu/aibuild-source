@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/cases/index",
+    "pages/history/index",
+    "pages/case-detail/index",
+    "pages/plan-detail/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "renderer": "webview"
+}

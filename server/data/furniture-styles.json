@@ -1,0 +1,134 @@
+[
+  {
+    "furnitureId": "folding_bed",
+    "furnitureLabel": "折叠床",
+    "styles": [
+      {
+        "id": "folding_bed-niwar",
+        "label": "编织折叠床",
+        "description": "轻量、可收起，适合低成本休息位。",
+        "imagePath": "folding_bed/folding_bed-niwar.jpg",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Folding_bed_made_with_Niwar.jpg",
+        "license": "CC BY-SA 4.0",
+        "attribution": "RAJIVVASUDEV"
+      },
+      {
+        "id": "folding_bed-murphy",
+        "label": "壁床款",
+        "description": "收起后贴墙，适合狭小空间腾出通道。",
+        "imagePath": "folding_bed/folding_bed-murphy.jpg",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Murphy_bed.jpg",
+        "license": "CC BY 2.0",
+        "attribution": "David Boyle"
+      },
+      {
+        "id": "folding_bed-wooden",
+        "label": "木质折叠床",
+        "description": "更像固定家具，适合温暖克制的休息角。",
+        "imagePath": "folding_bed/folding_bed-wooden.jpg",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bed,_folding_(AM_2015.20.6-3).jpg",
+        "license": "CC BY 4.0",
+        "attribution": "Auckland Museum"
+      }
+    ]
+  },
+  {
+    "furnitureId": "locker",
+    "furnitureLabel": "储物柜",
+    "styles": [
+      {
+        "id": "locker-wall-closet",
+        "label": "整墙储物柜",
+        "description": "容量大、门板整洁，适合靠墙集中收纳。",
+        "imagePath": "locker/locker-wall-closet.jpg",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wall-closet.jpg",
+        "license": "Public domain",
+        "attribution": "Tysto"
+      },
+      {
+        "id": "locker-vitsoe-storage",
+        "label": "模块收纳墙",
+        "description": "模块化、线条轻，适合与桌面和开放格组合。",
+        "imagePath": "locker/locker-vitsoe-storage.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/62021300@N00/2629765822",
+        "license": "CC BY 2.0",
+        "attribution": "Incase."
+      },
+      {
+        "id": "locker-wood-cabinet",
+        "label": "木质矮柜",
+        "description": "尺度亲和，可兼作台面或临时置物。",
+        "imagePath": "locker/locker-wood-cabinet.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/42001373@N00/51650675",
+        "license": "CC BY 2.0",
+        "attribution": "RelentlesslyOptimistic"
+      }
+    ]
+  },
+  {
+    "furnitureId": "shelf",
+    "furnitureLabel": "置物架",
+    "styles": [
+      {
+        "id": "shelf-kitchen-open",
+        "label": "开放层板架",
+        "description": "常用物品一眼可见，适合工具与补给整理。",
+        "imagePath": "shelf/shelf-kitchen-open.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/39415781@N06/6050605000",
+        "license": "CC BY 2.0",
+        "attribution": "ell brown"
+      },
+      {
+        "id": "shelf-closet",
+        "label": "壁柜层架",
+        "description": "贴墙收纳，适合把零散用品集中到一侧。",
+        "imagePath": "shelf/shelf-closet.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/81757835@N00/6399706701",
+        "license": "CC BY 2.0",
+        "attribution": "BeckyF"
+      },
+      {
+        "id": "shelf-storage-unit",
+        "label": "台面置物架",
+        "description": "下方收纳、上方操作台，适合小空间复合使用。",
+        "imagePath": "shelf/shelf-storage-unit.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/81757835@N00/6399707093",
+        "license": "CC BY 2.0",
+        "attribution": "BeckyF"
+      }
+    ]
+  },
+  {
+    "furnitureId": "table",
+    "furnitureLabel": "桌子",
+    "styles": [
+      {
+        "id": "table-work-desk",
+        "label": "工作桌",
+        "description": "普通工作台尺度，适合登记、书写或临时用餐。",
+        "imagePath": "table/table-work-desk.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/41894190608@N01/2864132664",
+        "license": "CC BY 2.0",
+        "attribution": "dennis"
+      },
+      {
+        "id": "table-ikea-desk",
+        "label": "简洁书桌",
+        "description": "线条轻、桌面完整，适合紧凑办公角。",
+        "imagePath": "table/table-ikea-desk.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/23345090@N07/3989577244",
+        "license": "CC BY 2.0",
+        "attribution": "evilsarah"
+      },
+      {
+        "id": "table-new-desk",
+        "label": "宽面桌",
+        "description": "桌面更宽，适合多人轮换使用或临时会议。",
+        "imagePath": "table/table-new-desk.jpg",
+        "sourceUrl": "https://www.flickr.com/photos/26354629@N02/4130510266",
+        "license": "CC BY 2.0",
+        "attribution": "alexkerhead"
+      }
+    ]
+  }
+]

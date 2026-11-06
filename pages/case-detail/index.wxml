@@ -1,0 +1,72 @@
+<navigation-bar
+  title="案例详情"
+  back="{{true}}"
+  fallback-url="/pages/cases/index"
+  color="#111827"
+  background="#F7F8FC"
+></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y>
+  <view class="page">
+    <view wx:if="{{loading}}" class="card empty-card">
+      <view class="empty-title">案例加载中</view>
+      <view class="empty-desc">正在整理案例内容，请稍候。</view>
+    </view>
+
+    <view wx:elif="{{errorMessage}}" class="card empty-card">
+      <view class="empty-title">案例详情不可用</view>
+      <view class="empty-desc">{{errorMessage}}</view>
+      <button class="ghost-btn" bindtap="goBackToCases">返回案例列表</button>
+    </view>
+
+    <block wx:elif="{{caseItem}}">
+      <view class="hero-card">
+        <view class="hero-title">{{caseItem.title}}</view>
+        <view class="hero-desc">{{caseItem.subtitle}}</view>
+        <view class="case-tags">
+          <view class="case-tag">{{caseItem.spaceType}}</view>
+          <view class="case-tag">{{caseItem.targetUsers}}</view>
+          <view class="case-tag">{{caseItem.budgetRange}}</view>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">改造前</view>
+        <view wx:if="{{caseItem.beforeImageUrl}}" class="image-shell" bindtap="previewCaseImage" data-url="{{caseItem.beforeImageUrl}}">
+          <image class="image-block" src="{{caseItem.beforeDisplayImagePath || caseItem.beforeImageUrl}}" mode="aspectFill"></image>
+        </view>
+        <view class="detail-text">原始问题：{{caseItem.subtitle}}</view>
+        <view class="detail-text">保持一致：{{caseItem.highlight}}</view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">改造后 3D 渲染</view>
+        <view wx:if="{{caseItem.renderImageUrl || caseItem.coverImageUrl}}" class="image-shell render-shell" bindtap="previewCaseImage" data-url="{{caseItem.renderImageUrl || caseItem.coverImageUrl}}">
+          <image class="image-block" src="{{caseItem.renderDisplayImagePath || caseItem.renderImageUrl || caseItem.coverImageUrl}}" mode="aspectFill"></image>
+        </view>
+        <view class="detail-text">最终效果：用更有秩序的布置和更明确的功能分区，让基层休息空间更好用、更温暖，也更适合展示与复用。</view>
+        <view class="detail-text">可借鉴点：{{caseItem.summary}}</view>
+        <view wx:if="{{caseItem.modelNote}}" class="detail-text">模型记录：{{caseItem.modelNote}}</view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">改造方案</view>
+        <view wx:if="{{caseItem.floorPlanImageUrl}}" class="image-shell floor-plan-shell" bindtap="previewCaseImage" data-url="{{caseItem.floorPlanImageUrl}}">
+          <image class="image-block" src="{{caseItem.floorPlanDisplayImagePath || caseItem.floorPlanImageUrl}}" mode="aspectFill"></image>
+        </view>
+        <view class="detail-text">输入需求：{{caseItem.coreNeeds}}</view>
+        <view class="detail-text">硬性约束：{{caseItem.constraints}}</view>
+        <view class="detail-text">布局逻辑：{{caseItem.layoutSummary}}</view>
+        <view class="detail-text">生成模型：{{caseItem.generationModel}}</view>
+        <view class="tag-group">
+          <view wx:for="{{caseItem.tags}}" wx:key="*this" class="soft-tag">{{item}}</view>
+        </view>
+      </view>
+
+      <view class="action-row">
+        <button class="ghost-btn" bindtap="goBackToCases">返回案例列表</button>
+        <button class="primary-btn" bindtap="applyCasePreset">套用该案例需求</button>
+      </view>
+    </block>
+  </view>
+</scroll-view>
